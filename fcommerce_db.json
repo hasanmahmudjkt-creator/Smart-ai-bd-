@@ -1,0 +1,680 @@
+{
+  "store": {
+    "id": 1,
+    "name": "F-Commerce Fashion Store",
+    "inside_city_fee": 60,
+    "outside_city_fee": 120,
+    "currency": "BDT"
+  },
+  "products": [
+    {
+      "id": 1,
+      "title": "Premium Cotton Graphic T-Shirt",
+      "sku": "TS-001",
+      "price": 650,
+      "stock": 25,
+      "category": "Apparel",
+      "variants": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "description": "100% Organic breathable cotton t-shirt with premium screen print."
+    },
+    {
+      "id": 2,
+      "title": "Urban Slim Fit Denim Jacket",
+      "sku": "JK-002",
+      "price": 2200,
+      "stock": 10,
+      "category": "Outwear",
+      "variants": [
+        "Blue",
+        "Black"
+      ],
+      "description": "Heavyweight durable denim jacket styled for modern streetwear."
+    },
+    {
+      "id": 3,
+      "title": "Minimalist Canvas Sneakers",
+      "sku": "SN-003",
+      "price": 1450,
+      "stock": 15,
+      "category": "Footwear",
+      "variants": [
+        "EU 40",
+        "EU 41",
+        "EU 42",
+        "EU 43"
+      ],
+      "description": "Comfortable cushioned rubber sole canvas sneakers for everyday wear."
+    },
+    {
+      "id": 4,
+      "store_id": 2,
+      "title": "Wireless ANC Earbuds Pro",
+      "price": 3200,
+      "description": "Active Noise Cancelling Bluetooth 5.3 Earbuds with 30hr battery.",
+      "stock": 15,
+      "category": "Electronics",
+      "sku": "SKU-5049",
+      "variants": []
+    },
+    {
+      "id": 5,
+      "store_id": 3,
+      "title": "Wireless ANC Earbuds Pro",
+      "price": 3200,
+      "description": "Active Noise Cancelling Bluetooth 5.3 Earbuds with 30hr battery.",
+      "stock": 15,
+      "category": "Electronics",
+      "image_url": "",
+      "sku": "SKU-4353",
+      "variants": []
+    },
+    {
+      "id": 6,
+      "store_id": 4,
+      "title": "Wireless ANC Earbuds Pro",
+      "price": 3200,
+      "description": "Active Noise Cancelling Bluetooth 5.3 Earbuds with 30hr battery.",
+      "stock": 15,
+      "category": "Electronics",
+      "image_url": "",
+      "sku": "SKU-3550",
+      "variants": []
+    },
+    {
+      "id": 7,
+      "store_id": 5,
+      "title": "Wireless ANC Earbuds Pro",
+      "price": 3200,
+      "description": "Active Noise Cancelling Bluetooth 5.3 Earbuds with 30hr battery.",
+      "stock": 15,
+      "category": "Electronics",
+      "image_url": "",
+      "sku": "SKU-7649",
+      "variants": []
+    }
+  ],
+  "conversations": [
+    {
+      "id": 1,
+      "psid": "sim_customer_101",
+      "is_ai_active": false,
+      "handoff_reason": "Customer requested human support.",
+      "created_at": "2026-07-27T05:23:42.302Z",
+      "updated_at": "2026-07-27T05:23:42.306Z"
+    },
+    {
+      "id": 2,
+      "psid": "gadget_customer_01",
+      "store_id": 2,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-07-28T00:53:55.051Z",
+      "updated_at": "2026-07-28T00:53:55.051Z"
+    },
+    {
+      "id": 3,
+      "psid": "sim_customer_101",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-07-28T00:54:45.588Z",
+      "updated_at": "2026-07-28T01:11:53.391Z"
+    },
+    {
+      "id": 4,
+      "psid": "gadget_customer_01",
+      "store_id": 3,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-07-28T07:41:44.355Z",
+      "updated_at": "2026-07-28T07:41:44.355Z"
+    },
+    {
+      "id": 5,
+      "psid": "gadget_customer_01",
+      "store_id": 4,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-07-28T07:41:53.551Z",
+      "updated_at": "2026-07-28T07:41:53.551Z"
+    },
+    {
+      "id": 6,
+      "psid": "gadget_customer_01",
+      "store_id": 5,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-07-29T02:26:07.650Z",
+      "updated_at": "2026-07-29T02:26:07.650Z"
+    },
+    {
+      "id": 7,
+      "psid": "7788990011",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-02T16:54:27.238Z",
+      "updated_at": "2026-08-02T16:54:27.238Z"
+    },
+    {
+      "id": 8,
+      "psid": "9988776655",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-03T04:57:22.488Z",
+      "updated_at": "2026-08-03T04:57:22.488Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "conversation_id": 1,
+      "sender": "user",
+      "text": "Hi, what products do you have and what are their prices?",
+      "created_at": "2026-07-27T05:23:42.303Z"
+    },
+    {
+      "id": 2,
+      "conversation_id": 1,
+      "sender": "assistant",
+      "text": "Hello! Here are our current available products at **F-Commerce Fashion Store**:\n\n• **Premium Cotton Graphic T-Shirt**: BDT 650 (In Stock)\n• **Urban Slim Fit Denim Jacket**: BDT 2200 (In Stock)\n• **Minimalist Canvas Sneakers**: BDT 1450 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to confirm your order!",
+      "created_at": "2026-07-27T05:23:42.303Z"
+    },
+    {
+      "id": 3,
+      "conversation_id": 1,
+      "sender": "user",
+      "text": "How much is the delivery charge for Dhaka and outside Dhaka?",
+      "created_at": "2026-07-27T05:23:42.304Z"
+    },
+    {
+      "id": 4,
+      "conversation_id": 1,
+      "sender": "assistant",
+      "text": "Hello! Here are our current available products at **F-Commerce Fashion Store**:\n\n• **Premium Cotton Graphic T-Shirt**: BDT 650 (In Stock)\n• **Urban Slim Fit Denim Jacket**: BDT 2200 (In Stock)\n• **Minimalist Canvas Sneakers**: BDT 1450 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to confirm your order!",
+      "created_at": "2026-07-27T05:23:42.304Z"
+    },
+    {
+      "id": 5,
+      "conversation_id": 1,
+      "sender": "user",
+      "text": "I want to order 1 Cotton T-shirt size L. Name: Tanvir Hasan, Phone: 01711223344, Address: House 45, Road 7, Dhanmondi, Dhaka",
+      "created_at": "2026-07-27T05:23:42.305Z"
+    },
+    {
+      "id": 6,
+      "conversation_id": 1,
+      "sender": "assistant",
+      "text": "🎉 Thank you, Tanvir Hasan! Your order has been placed successfully!\n\n📋 **Order Summary (Order #1):**\n• Subtotal: BDT 650.00\n• Delivery Fee (Inside City): BDT 60.00\n• **Total Payable:** BDT 710.00\n\n📍 Delivery Address: House 45, Road 7, Dhanmondi, Dhaka\n📞 Contact Phone: 01711223344\nPayment Method: Cash on Delivery (COD)\n\nOur delivery team will call you shortly before dispatching your package!",
+      "created_at": "2026-07-27T05:23:42.306Z"
+    },
+    {
+      "id": 7,
+      "conversation_id": 1,
+      "sender": "user",
+      "text": "Can I speak with a human support agent?",
+      "created_at": "2026-07-27T05:23:42.306Z"
+    },
+    {
+      "id": 8,
+      "conversation_id": 1,
+      "sender": "assistant",
+      "text": "Understood! I am notifying a human support representative from F-Commerce Fashion Store to take over this chat. Please hold on a moment.",
+      "created_at": "2026-07-27T05:23:42.307Z"
+    },
+    {
+      "id": 9,
+      "conversation_id": 2,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-07-28T00:53:55.051Z"
+    },
+    {
+      "id": 10,
+      "conversation_id": 2,
+      "sender": "assistant",
+      "text": "Hello! Here are our current available products at **Gadget World BD**:\n\n• **Wireless ANC Earbuds Pro**: BDT 3200 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 70\n• Outside City: BDT 130\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to confirm your order!",
+      "created_at": "2026-07-28T00:53:55.051Z"
+    },
+    {
+      "id": 11,
+      "conversation_id": 2,
+      "sender": "user",
+      "text": "I want to order 1 Wireless ANC Earbuds Pro. Name: Sumon Khan, Phone: 01812345678, Address: Sector 4, Uttara, Dhaka",
+      "created_at": "2026-07-28T00:53:55.053Z"
+    },
+    {
+      "id": 12,
+      "conversation_id": 2,
+      "sender": "assistant",
+      "text": "🎉 Thank you, Sumon Khan! Your order has been placed successfully!\n\n📋 **Order Summary (Order #2):**\n• Subtotal: BDT 3200.00\n• Delivery Fee (Inside City): BDT 70.00\n• **Total Payable:** BDT 3270.00\n\n📍 Delivery Address: Sector 4, Uttara, Dhaka\n📞 Contact Phone: 01812345678\nPayment Method: Cash on Delivery (COD)\n\nOur delivery team will call you shortly before dispatching your package!",
+      "created_at": "2026-07-28T00:53:55.054Z"
+    },
+    {
+      "id": 13,
+      "conversation_id": 3,
+      "sender": "user",
+      "text": "hi",
+      "created_at": "2026-07-28T01:11:34.945Z"
+    },
+    {
+      "id": 14,
+      "conversation_id": 3,
+      "sender": "assistant",
+      "text": "[Persona Directive: You are an expert F-Commerce Sales Assistant for F-Commerce Fashion Store. Be polite, friendly, helpful, and focused on converting customer inquiries into completed orders.]\n\nHello! Welcome to **F-Commerce Fashion Store**! 👋\n\nHow can I help you today? Ask us about prices, delivery fees, or send your **Name, Phone & Address** to place an order instantly!",
+      "created_at": "2026-07-28T01:11:34.945Z"
+    },
+    {
+      "id": 15,
+      "conversation_id": 4,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-07-28T07:41:44.355Z"
+    },
+    {
+      "id": 16,
+      "conversation_id": 4,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **Gadget World BD**:\n\n• **Wireless ANC Earbuds Pro**: BDT 3200 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 70\n• Outside City: BDT 130\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-07-28T07:41:44.356Z"
+    },
+    {
+      "id": 17,
+      "conversation_id": 4,
+      "sender": "user",
+      "text": "I want to order 1 Wireless ANC Earbuds Pro. Name: Sumon Khan, Phone: 01812345678, Address: Sector 4, Uttara, Dhaka",
+      "created_at": "2026-07-28T07:41:44.357Z"
+    },
+    {
+      "id": 18,
+      "conversation_id": 4,
+      "sender": "assistant",
+      "text": "🎉 Thank you, Sumon Khan! Your order has been placed successfully!\n\n📋 **Order Summary (Order #3):**\n• Subtotal: BDT 3200.00\n• Delivery Fee (Inside City): BDT 70.00\n• **Total Payable:** BDT 3270.00\n\n📍 Delivery Address: Sector 4, Uttara, Dhaka\n📞 Contact Phone: 01812345678\nPayment Method: Cash on Delivery (COD)\n\nOur delivery team will call you shortly before dispatching your package!",
+      "created_at": "2026-07-28T07:41:44.358Z"
+    },
+    {
+      "id": 19,
+      "conversation_id": 5,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-07-28T07:41:53.551Z"
+    },
+    {
+      "id": 20,
+      "conversation_id": 5,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **Gadget World BD**:\n\n• **Wireless ANC Earbuds Pro**: BDT 3200 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 70\n• Outside City: BDT 130\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-07-28T07:41:53.552Z"
+    },
+    {
+      "id": 21,
+      "conversation_id": 5,
+      "sender": "user",
+      "text": "I want to order 1 Wireless ANC Earbuds Pro. Name: Sumon Khan, Phone: 01812345678, Address: Sector 4, Uttara, Dhaka",
+      "created_at": "2026-07-28T07:41:53.553Z"
+    },
+    {
+      "id": 22,
+      "conversation_id": 5,
+      "sender": "assistant",
+      "text": "🎉 Thank you, Sumon Khan! Your order has been placed successfully!\n\n📋 **Order Summary (Order #4):**\n• Subtotal: BDT 3200.00\n• Delivery Fee (Inside City): BDT 70.00\n• **Total Payable:** BDT 3270.00\n\n📍 Delivery Address: Sector 4, Uttara, Dhaka\n📞 Contact Phone: 01812345678\nPayment Method: Cash on Delivery (COD)\n\nOur delivery team will call you shortly before dispatching your package!",
+      "created_at": "2026-07-28T07:41:53.554Z"
+    },
+    {
+      "id": 23,
+      "conversation_id": 5,
+      "sender": "user",
+      "text": "x",
+      "created_at": "2026-07-28T07:41:53.556Z"
+    },
+    {
+      "id": 24,
+      "conversation_id": 6,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-07-29T02:26:07.651Z"
+    },
+    {
+      "id": 25,
+      "conversation_id": 6,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **Gadget World BD**:\n\n• **Wireless ANC Earbuds Pro**: BDT 3200 (In Stock)\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 70\n• Outside City: BDT 130\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-07-29T02:26:07.651Z"
+    },
+    {
+      "id": 26,
+      "conversation_id": 6,
+      "sender": "user",
+      "text": "I want to order 1 Wireless ANC Earbuds Pro. Name: Sumon Khan, Phone: 01812345678, Address: Sector 4, Uttara, Dhaka",
+      "created_at": "2026-07-29T02:26:07.653Z"
+    },
+    {
+      "id": 27,
+      "conversation_id": 6,
+      "sender": "assistant",
+      "text": "🎉 Thank you, Sumon Khan! Your order has been placed successfully!\n\n📋 **Order Summary (Order #5):**\n• Subtotal: BDT 3200.00\n• Delivery Fee (Inside City): BDT 70.00\n• **Total Payable:** BDT 3270.00\n\n📍 Delivery Address: Sector 4, Uttara, Dhaka\n📞 Contact Phone: 01812345678\nPayment Method: Cash on Delivery (COD)\n\nOur delivery team will call you shortly before dispatching your package!",
+      "created_at": "2026-07-29T02:26:07.653Z"
+    },
+    {
+      "id": 28,
+      "conversation_id": 6,
+      "sender": "user",
+      "text": "x",
+      "created_at": "2026-07-29T02:26:07.655Z"
+    },
+    {
+      "id": 29,
+      "conversation_id": 7,
+      "sender": "user",
+      "text": "T-Shirt er price koto?",
+      "created_at": "2026-08-02T16:54:27.239Z"
+    },
+    {
+      "id": 30,
+      "conversation_id": 7,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-02T16:54:27.240Z"
+    },
+    {
+      "id": 31,
+      "conversation_id": 7,
+      "sender": "user",
+      "text": "T-Shirt er price koto?",
+      "created_at": "2026-08-03T04:30:16.529Z"
+    },
+    {
+      "id": 32,
+      "conversation_id": 7,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-03T04:30:16.530Z"
+    },
+    {
+      "id": 33,
+      "conversation_id": 8,
+      "sender": "user",
+      "text": "Posh People Page Test: Dam koto?",
+      "created_at": "2026-08-03T04:57:22.489Z"
+    },
+    {
+      "id": 34,
+      "conversation_id": 8,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-03T04:57:23.104Z"
+    },
+    {
+      "id": 35,
+      "conversation_id": 8,
+      "sender": "user",
+      "text": "Posh People Page Test: Dam koto?",
+      "created_at": "2026-08-03T04:58:59.647Z"
+    },
+    {
+      "id": 36,
+      "conversation_id": 8,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-03T04:59:00.299Z"
+    },
+    {
+      "id": 37,
+      "conversation_id": 8,
+      "sender": "user",
+      "text": "Posh People Page Test: Dam koto?",
+      "created_at": "2026-08-03T05:03:46.968Z"
+    },
+    {
+      "id": 38,
+      "conversation_id": 8,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 60\n• Outside City: BDT 120\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-03T05:03:47.529Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "status": "pending",
+      "created_at": "2026-07-27T05:23:42.305Z",
+      "psid": "sim_customer_101",
+      "customer_name": "Tanvir Hasan",
+      "phone_number": "01711223344",
+      "full_address": "House 45, Road 7, Dhanmondi, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": 1,
+          "title": "Premium Cotton Graphic T-Shirt",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 650,
+          "total": 650
+        }
+      ],
+      "subtotal": 650,
+      "delivery_fee": 60,
+      "total_amount": 710,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    },
+    {
+      "id": 2,
+      "store_id": 2,
+      "status": "pending",
+      "created_at": "2026-07-28T00:53:55.054Z",
+      "psid": "gadget_customer_01",
+      "customer_name": "Sumon Khan",
+      "phone_number": "01812345678",
+      "full_address": "Sector 4, Uttara, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": 4,
+          "title": "Wireless ANC Earbuds Pro",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 3200,
+          "total": 3200
+        }
+      ],
+      "subtotal": 3200,
+      "delivery_fee": 70,
+      "total_amount": 3270,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    },
+    {
+      "id": 3,
+      "store_id": 3,
+      "status": "pending",
+      "created_at": "2026-07-28T07:41:44.357Z",
+      "psid": "gadget_customer_01",
+      "customer_name": "Sumon Khan",
+      "phone_number": "01812345678",
+      "full_address": "Sector 4, Uttara, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": 5,
+          "title": "Wireless ANC Earbuds Pro",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 3200,
+          "total": 3200
+        }
+      ],
+      "subtotal": 3200,
+      "delivery_fee": 70,
+      "total_amount": 3270,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    },
+    {
+      "id": 4,
+      "store_id": 4,
+      "status": "pending",
+      "created_at": "2026-07-28T07:41:53.554Z",
+      "psid": "gadget_customer_01",
+      "customer_name": "Sumon Khan",
+      "phone_number": "01812345678",
+      "full_address": "Sector 4, Uttara, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": 6,
+          "title": "Wireless ANC Earbuds Pro",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 3200,
+          "total": 3200
+        }
+      ],
+      "subtotal": 3200,
+      "delivery_fee": 70,
+      "total_amount": 3270,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    },
+    {
+      "id": 5,
+      "store_id": 5,
+      "status": "pending",
+      "created_at": "2026-07-29T02:26:07.653Z",
+      "psid": "gadget_customer_01",
+      "customer_name": "Sumon Khan",
+      "phone_number": "01812345678",
+      "full_address": "Sector 4, Uttara, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": 7,
+          "title": "Wireless ANC Earbuds Pro",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 3200,
+          "total": 3200
+        }
+      ],
+      "subtotal": 3200,
+      "delivery_fee": 70,
+      "total_amount": 3270,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Demo Store Owner",
+      "email": "demo@fcommerce.com",
+      "password": "password123",
+      "store_id": 1,
+      "created_at": "2026-07-28T00:53:48.583Z"
+    },
+    {
+      "id": 2,
+      "name": "Tariqul Islam",
+      "email": "tariq_1785200035011@gadgetworld.com",
+      "password": "secretpassword",
+      "store_id": 2,
+      "created_at": "2026-07-28T00:53:55.041Z"
+    },
+    {
+      "id": 3,
+      "name": "Tariqul Islam",
+      "email": "tariq_1785224504298@gadgetworld.com",
+      "password": "secretpassword",
+      "store_id": 3,
+      "created_at": "2026-07-28T07:41:44.345Z"
+    },
+    {
+      "id": 4,
+      "name": "Tariqul Islam",
+      "email": "tariq_1785224513528@gadgetworld.com",
+      "password": "secretpassword",
+      "store_id": 4,
+      "created_at": "2026-07-28T07:41:53.544Z"
+    },
+    {
+      "id": 5,
+      "name": "Tariqul Islam",
+      "email": "tariq_1785291967608@gadgetworld.com",
+      "password": "secretpassword",
+      "store_id": 5,
+      "created_at": "2026-07-29T02:26:07.640Z"
+    }
+  ],
+  "stores": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "name": "F-Commerce Fashion Store",
+      "currency": "BDT",
+      "inside_city_fee": 70,
+      "outside_city_fee": 130,
+      "fb_page_id": "164682286725145",
+      "fb_access_token": "EAAYpP2z0ceQBSBGJV6eFNZBaStsw47kWvftIAt34hCh7FUsnzFEsgL8Ed1T4Lwu3r3Lj7Y1Gcx0aidmfU3Y2b5nE2sxdbltVW6mjkBTX1aIZCfMdXJmj086tXyTUq82BPqbmiwSs0DuSsFBY8wPy5z0xZB1KZCkPhf4LNaSAWH5JLClOT5IYZAe5XoCSUzKxzD1tAZBWsNQNNahI6Jk1ce",
+      "verify_token": "fcommerce_ai_secret_token_123",
+      "custom_prompt": "You are an expert F-Commerce Sales Assistant for F-Commerce Fashion Store. Be polite, friendly, helpful, and focused on converting customer inquiries into completed orders.",
+      "gemini_api_key": "AIzaSy_TEST_GEMINI_KEY"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "name": "Gadget World BD",
+      "currency": "BDT",
+      "inside_city_fee": 70,
+      "outside_city_fee": 130,
+      "fb_page_id": "",
+      "fb_access_token": "",
+      "verify_token": "fcommerce_token_2_ms3y0au9",
+      "custom_prompt": "You are an enthusiastic tech gadget specialist. Always offer 5% cash discount for bKash payment!"
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "name": "Gadget World BD",
+      "currency": "BDT",
+      "inside_city_fee": 70,
+      "outside_city_fee": 130,
+      "fb_page_id": "",
+      "fb_access_token": "",
+      "verify_token": "fcommerce_token_3_ms4ckrh5",
+      "gemini_api_key": "",
+      "custom_prompt": "You are an enthusiastic tech gadget specialist. Always offer 5% cash discount for bKash payment!"
+    },
+    {
+      "id": 4,
+      "user_id": 4,
+      "name": "Gadget World BD",
+      "currency": "BDT",
+      "inside_city_fee": 70,
+      "outside_city_fee": 130,
+      "fb_page_id": "",
+      "fb_access_token": "",
+      "verify_token": "fcommerce_token_4_ms4ckyko",
+      "gemini_api_key": "",
+      "custom_prompt": "You are an enthusiastic tech gadget specialist. Always offer 5% cash discount for bKash payment!"
+    },
+    {
+      "id": 5,
+      "user_id": 5,
+      "name": "Gadget World BD",
+      "currency": "BDT",
+      "inside_city_fee": 70,
+      "outside_city_fee": 130,
+      "fb_page_id": "",
+      "fb_access_token": "",
+      "verify_token": "fcommerce_token_5_ms5gqqhk",
+      "gemini_api_key": "",
+      "custom_prompt": "You are an enthusiastic tech gadget specialist. Always offer 5% cash discount for bKash payment!"
+    }
+  ]
+}
