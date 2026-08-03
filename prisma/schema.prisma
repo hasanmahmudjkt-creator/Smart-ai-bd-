@@ -1,0 +1,190 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  MERCHANT
+}
+
+enum ConversationStatus {
+  ACTIVE
+  HUMAN_TAKEOVER
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING_REVIEW
+  PAYMENT_UNVERIFIED
+  CONFIRMED
+  SENT_TO_COURIER
+  CANCELLED
+}
+
+enum PaymentGateway {
+  BKASH
+  NAGAD
+  ROCKET
+  COD
+}
+
+enum PaymentStatus {
+  UNVERIFIED
+  MATCHED
+  FAILED
+}
+
+enum AITone {
+  FRIENDLY
+  PROFESSIONAL
+  DIRECT
+}
+
+model Tenant {
+  id                    String              @id @default(uuid())
+  email                 String              @unique
+  passwordHash          String
+  phone                 String              @unique
+  storeName             String
+  role                  Role                @default(MERCHANT)
+  isActive              Boolean             @default(true)
+  subscriptionExpiresAt DateTime
+  
+  // Delivery Rules & Fees (Defaults: Inside ৳70, Outside ৳130)
+  insideDhakaFee        Float               @default(70.0)
+  outsideDhakaFee       Float               @default(130.0)
+  bkashNumber           String?
+  nagadNumber           String?
+  rocketNumber          String?
+  
+  // Relations
+  fbIntegration         FBIntegration?
+  inventoryItems        InventoryItem[]
+  conversations         ConversationThread[]
+  orders                Order[]
+  smartRule             SmartRule?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+model FBIntegration {
+  id                   String   @id @default(uuid())
+  tenantId             String   @unique
+  tenant               Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  pageId               String   @unique
+  pageName             String
+  encryptedAccessToken String
+  webhookVerifyToken   String
+  isConnected          Boolean  @default(true)
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model InventoryItem {
+  id             String   @id @default(uuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  sku            String
+  title          String
+  description    String?
+  basePrice      Float
+  discountPrice  Float?
+  stockQuantity  Int      @default(0)
+  imageUrl       String?
+  attributes     Json?    // Size, Color, Specs
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([tenantId, sku])
+}
+
+model ConversationThread {
+  id                 String             @id @default(uuid())
+  tenantId           String
+  tenant             Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  customerPsid       String             // Facebook Page-Scoped ID
+  customerName       String?
+  status             ConversationStatus @default(ACTIVE)
+  humanTakeoverUntil DateTime?          // Takeover Lock Timestamp
+  lastMessageAt      DateTime           @default(now())
+  contextMemory      Json?              // History of last 10 messages
+  
+  orders             Order[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@unique([tenantId, customerPsid])
+}
+
+model Order {
+  id                   String               @id @default(uuid())
+  tenantId             String
+  tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  conversationThreadId String?
+  conversationThread   ConversationThread?  @relation(fields: [conversationThreadId], references: [id])
+  
+  customerName         String
+  customerPhone        String
+  deliveryAddress      String
+  district             String               @default("Dhaka")
+  
+  lineItems            Json                 // Array of [{ sku, title, qty, price }]
+  subtotal             Float
+  deliveryFee          Float
+  totalAmount          Float
+  
+  status               OrderStatus          @default(PENDING_REVIEW)
+  paymentMethod        PaymentGateway       @default(COD)
+  trxId                String?
+  
+  paymentTransactions  PaymentTransaction[]
+  
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+}
+
+model PaymentTransaction {
+  id              String        @id @default(uuid())
+  orderId         String?
+  order           Order?        @relation(fields: [orderId], references: [id])
+  
+  gateway         PaymentGateway
+  trxId           String        @unique
+  extractedAmount Float
+  senderPhone     String?
+  status          PaymentStatus @default(UNVERIFIED)
+  rawOcrText      String?
+  
+  createdAt       DateTime      @default(now())
+}
+
+model SmartRule {
+  id                    String   @id @default(uuid())
+  tenantId              String   @unique
+  tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  aiTone                AITone   @default(FRIENDLY)
+  maxDiscountPercentage Float    @default(10.0)
+  
+  // Custom Fallback Templates
+  paymentDetectedText   String   @default("পেমেন্ট ট্রানজেকশন রিসিভ হয়েছে। আমাদের টিম এটি ভেরিফাই করছে। ধন্যবাদ!")
+  stockOutText          String   @default("দুঃখিত, এই প্রোডাক্টটি বর্তমানে স্টক আউট রয়েছে।")
+  unclearRequestText    String   @default("দুঃখিত, আপনার কথাটি বুঝতে পারিনি। বিস্তারিত বলবেন কি?")
+  customPromptRules     String?  @default("Always respond politely in Bangla or Banglish. Confirm delivery district before creating an order.")
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
