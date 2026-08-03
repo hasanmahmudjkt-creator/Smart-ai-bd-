@@ -62,39 +62,41 @@ export class FCommerceSalesAgent {
   }
 
   async generateGeminiResponse(apiKey, systemInstruction, conversationHistory) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-      const contents = conversationHistory.map(msg => ({
-        role: msg.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }));
+    const modelsToTry = ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-2.0-flash'];
+    for (const model of modelsToTry) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const contents = conversationHistory.map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
 
-      const payload = {
-        system_instruction: {
-          parts: [{ text: systemInstruction }]
-        },
-        contents
-      };
+        const payload = {
+          system_instruction: {
+            parts: [{ text: systemInstruction }]
+          },
+          contents
+        };
 
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error("Gemini API error:", res.status, errText);
-        return null;
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text.trim();
+        } else {
+          const errText = await res.text();
+          console.warn(`Gemini API Model (${model}) warning [${res.status}]:`, errText);
+        }
+      } catch (err) {
+        console.error(`Gemini request exception for ${model}:`, err.message);
       }
-
-      const data = await res.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      return text ? text.trim() : null;
-    } catch (err) {
-      console.error("Gemini request exception:", err);
-      return null;
     }
+    return null;
   }
 
   async generateResponse(psid, userMessage, storeId = 1) {
