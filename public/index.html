@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F-Commerce AI Messenger Sales Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Auth Modal Container -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="brand-logo">
+        <span class="icon">🤖</span>
+        <h2>F-Commerce AI Engine</h2>
+        <p>Automated Facebook Messenger Sales & Gemini AI Platform</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <h3>Sign In to Your Account</h3>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" value="demo@fcommerce.com" placeholder="owner@store.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" value="password123" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        <p class="auth-switch">Don't have a store account? <a href="#" id="show-register">Register here</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form hidden">
+        <h3>Create New Store Account</h3>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="reg-name" placeholder="Rahim Ahmed" required>
+        </div>
+        <div class="form-group">
+          <label>Store / Brand Name</label>
+          <input type="text" id="reg-store-name" placeholder="Trendy Apparel BD" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" placeholder="rahim@store.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Create a password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Create Store & Sign In</button>
+        <p class="auth-switch">Already have an account? <a href="#" id="show-login">Sign In</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main App Layout -->
+  <div id="app-container" class="app-layout hidden">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="logo-icon">🤖</span>
+        <div>
+          <h1 id="header-store-name">F-Commerce Fashion Store</h1>
+          <span class="badge badge-success">● Powered by Gemini 2.5 AI Engine</span>
+        </div>
+      </div>
+      <div class="user-profile">
+        <span id="user-display-name">Demo Store Owner</span>
+        <button id="logout-btn" class="btn btn-sm btn-outline">Logout</button>
+      </div>
+    </header>
+
+    <!-- Top Metrics Overview -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-green">৳</div>
+        <div>
+          <div class="stat-title">Total Revenue</div>
+          <div id="stat-revenue" class="stat-value">BDT 0.00</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-blue">📦</div>
+        <div>
+          <div class="stat-title">Orders Captured</div>
+          <div id="stat-orders" class="stat-value">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-purple">🏷️</div>
+        <div>
+          <div class="stat-title">Inventory Items</div>
+          <div id="stat-products" class="stat-value">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-orange">💬</div>
+        <div>
+          <div class="stat-title">Active Conversations</div>
+          <div id="stat-conversations" class="stat-value">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-chat">💬 Messenger & AI Simulator</button>
+      <button class="tab-btn" data-tab="tab-orders">📦 Live Orders (<span id="orders-badge-count">0</span>)</button>
+      <button class="tab-btn" data-tab="tab-inventory">🏷️ Product Catalog & Images</button>
+      <button class="tab-btn" data-tab="tab-settings">⚙️ Gemini AI Prompt & Store Setup</button>
+    </nav>
+
+    <!-- TAB 1: Live Messenger & Simulator -->
+    <div id="tab-chat" class="tab-content active">
+      <div class="chat-wrapper">
+        <!-- Left: Conversations List -->
+        <div class="conversations-sidebar">
+          <h3>Customer Conversations</h3>
+          <div id="conversations-list" class="conversations-list">
+            <div class="empty-state">No conversations yet. Type in the simulator to test!</div>
+          </div>
+        </div>
+
+        <!-- Right: Active Chat Window -->
+        <div class="chat-main">
+          <div class="chat-header">
+            <div>
+              <h3 id="current-chat-psid">Simulator (sim_customer_101)</h3>
+              <p id="current-chat-status">Status: AI Auto-Reply Active</p>
+            </div>
+            <button id="toggle-ai-btn" class="btn btn-sm btn-outline">Pause AI (Human Mode)</button>
+          </div>
+
+          <!-- Message History Bubbles -->
+          <div id="chat-messages" class="chat-messages">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Simulator Input Box -->
+          <form id="chat-input-form" class="chat-input-area">
+            <input type="text" id="chat-user-input" placeholder="Type a message as a Facebook customer..." required>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Orders Dashboard -->
+    <div id="tab-orders" class="tab-content">
+      <div class="content-header">
+        <h2>Customer Orders</h2>
+        <div class="filter-group">
+          <button class="btn btn-sm btn-filter active" data-filter="all">All Orders</button>
+          <button class="btn btn-sm btn-filter" data-filter="pending">Pending</button>
+          <button class="btn btn-sm btn-filter" data-filter="confirmed">Confirmed</button>
+          <button class="btn btn-sm btn-filter" data-filter="shipped">Shipped</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer Name</th>
+              <th>Phone Number</th>
+              <th>Delivery Address</th>
+              <th>Zone</th>
+              <th>Items Ordered</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table-body">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: Inventory & Catalog Manager -->
+    <div id="tab-inventory" class="tab-content">
+      <div class="content-header">
+        <h2>Product Catalog & Multimodal Images</h2>
+        <button id="open-add-product-modal" class="btn btn-primary">+ Add New Product & Image</button>
+      </div>
+
+      <div id="products-grid" class="products-grid">
+        <!-- Dynamic Product Cards -->
+      </div>
+    </div>
+
+    <!-- TAB 4: AI Agent & Store Settings -->
+    <div id="tab-settings" class="tab-content">
+      <form id="settings-form" class="settings-card">
+        <h2>Gemini AI Training & Store Configuration</h2>
+        
+        <div class="form-section">
+          <h3>⚡ Google Gemini API Key</h3>
+          <p class="form-help">Connect your free or pay-as-you-go Gemini API Key from <a href="https://aistudio.google.com/" target="_blank" style="color:var(--primary);">Google AI Studio</a> to train Gemini 2.5 Flash on your exact store rules.</p>
+          <input type="text" id="setting-gemini-key" placeholder="AIzaSy..." style="margin-top: 6px;">
+        </div>
+
+        <div class="form-section">
+          <h3>🧠 Train Gemini AI: Prompt, Payment System & Sales Process</h3>
+          <p class="form-help">Write clear instructions on how your payments work (bKash/Nagad/COD), delivery time, return policies, and sales aggressive tone. Gemini will follow these rules on Facebook Messenger.</p>
+          <textarea id="setting-prompt" rows="7" placeholder="You are an aggressive yet polite F-Commerce Sales Agent..."></textarea>
+        </div>
+
+        <div class="form-section grid-2">
+          <div>
+            <h3>🏬 Store Details</h3>
+            <div class="form-group">
+              <label>Store Name</label>
+              <input type="text" id="setting-store-name" required>
+            </div>
+            <div class="form-group">
+              <label>Default Currency</label>
+              <input type="text" id="setting-currency" value="BDT" required>
+            </div>
+          </div>
+          <div>
+            <h3>🚚 Delivery Charge Policy</h3>
+            <div class="form-group">
+              <label>Inside City Delivery Fee (BDT)</label>
+              <input type="number" id="setting-inside-fee" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Outside City Delivery Fee (BDT)</label>
+              <input type="number" id="setting-outside-fee" step="0.01" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>🔌 Facebook Messenger Meta Webhook Integration</h3>
+          <div class="form-group">
+            <label>Facebook Page Access Token</label>
+            <input type="text" id="setting-fb-token" placeholder="EAAB...">
+          </div>
+          <div class="form-group">
+            <label>Webhook Verify Token</label>
+            <input type="text" id="setting-verify-token" readonly>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save All Configuration Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div id="add-product-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3>Add New Product & Photo</h3>
+      <form id="add-product-form">
+        <div class="form-group">
+          <label>Product Title *</label>
+          <input type="text" id="prod-title" placeholder="e.g. Leather Wallet" required>
+        </div>
+        <div class="form-group grid-2">
+          <div>
+            <label>Price (BDT) *</label>
+            <input type="number" id="prod-price" step="0.01" placeholder="850" required>
+          </div>
+          <div>
+            <label>Stock Quantity *</label>
+            <input type="number" id="prod-stock" value="15" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Product Image URL *</label>
+          <input type="url" id="prod-image-url" placeholder="https://images.unsplash.com/photo-..." required>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" id="prod-category" placeholder="Accessories">
+        </div>
+        <div class="form-group">
+          <label>Available Variants (Comma separated)</label>
+          <input type="text" id="prod-variants" placeholder="Black, Brown, Tan">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="prod-description" rows="3" placeholder="Product details..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="close-add-product-modal" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
