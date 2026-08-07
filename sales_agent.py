@@ -263,60 +263,102 @@ class FCommerceSalesAgent:
         ai_reply = None
         gemini_key = self.get_api_key()
 
-        # Use Gemini API if valid key is available
-        if gemini_key and gemini_key != "your_gemini_api_key_here" and not gemini_key.startswith("AIzaSy_TEST"):
+        # 1. Try Groq API (Ultra-fast Llama 3.3 70B ~0.4s)
+        groq_key = getattr(self.store, 'groq_api_key', None) or os.getenv("GROQ_API_KEY", "")
+        if groq_key and groq_key != "YOUR_GROQ_API_KEY_HERE" and not ai_reply:
             try:
                 import httpx
-                models_to_try = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-2.0-flash"]
-                for model in models_to_try:
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
-                    contents_payload = [
-                        {"role": "user" if m.sender == "user" else "model", "parts": [{"text": m.text}]}
-                        for m in history_msgs
-                    ]
-                    async with httpx.AsyncClient() as http_client:
-                        res = await http_client.post(
-                            url,
-                            headers={"Content-Type": "application/json"},
-                            json={"system_instruction": {"parts": [{"text": system_prompt}]}, "contents": contents_payload},
-                            timeout=15.0
-                        )
-                        if res.status_code == 200:
-                            data = res.json()
-                            ai_reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
-                            if ai_reply:
-                                break
-                        else:
-                            logger.warning(f"Gemini API model {model} status {res.status_code}: {res.text}")
-                
-                if not ai_reply:
-                    ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
-            except Exception as e:
-                logger.error(f"Gemini API execution error: {e}")
-                ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
-        elif OPENAI_API_KEY and OPENAI_API_KEY != "your_openai_api_key_here":
-            try:
-                import httpx
-                headers = {"Authorization": f"Bearer {OPENAI_API_KEY}"}
+                headers = {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
                 messages_payload = [{"role": "system", "content": system_prompt}]
                 for m in history_msgs:
-                    role = "user" if m.sender == "user" else "assistant"
-                    messages_payload.append({"role": role, "content": m.text})
-
+                    messages_payload.append({"role": "user" if m.sender == "user" else "assistant", "content": m.text})
+                
                 async with httpx.AsyncClient() as http_client:
                     res = await http_client.post(
-                        "https://api.openai.com/v1/chat/completions",
+                        "https://api.groq.com/openai/v1/chat/completions",
                         headers=headers,
-                        json={"model": "gpt-4o-mini", "messages": messages_payload},
+                        json={"model": "llama-3.3-70b-versatile", "messages": messages_payload, "temperature": 0.7},
+                        timeout=10.0
+                    )
+                    if res.status_code == 200:
+                        data = res.json()
+                        ai_reply = data["choices"][0]["message"]["content"]
+            except Exception as e:
+                logger.error(f"Groq API execution error: {e}")
+
+        # 2. Try OpenRouter API (Free open models)
+        openrouter_key = getattr(self.store, 'openrouter_api_key', None) or os.getenv("OPENROUTER_API_KEY", "")
+        if openrouter_key and openrouter_key != "YOUR_OPENROUTER_API_KEY_HERE" and not ai_reply:
+            try:
+                import httpx
+                headers = {
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://smartmessenger.ai",
+                    "X-Title": "Smart Messenger AI SaaS"
+                }
+                messages_payload = [{"role": "system", "content": system_prompt}]
+                for m in history_msgs:
+                    messages_payload.append({"role": "user" if m.sender == "user" else "assistant", "content": m.text})
+                
+                async with httpx.AsyncClient() as http_client:
+                    res = await http_client.post(
+                        "https://openrouter.ai/api/v1/chat/completions",
+                        headers=headers,
+                        json={"model": "meta-llama/llama-3.3-70b-instruct:free", "messages": messages_payload},
                         timeout=15.0
                     )
-                    data = res.json()
-                    ai_reply = data["choices"][0]["message"]["content"]
+                    if res.status_code == 200:
+                        data = res.json()
+                        ai_reply = data["choices"][0]["message"]["content"]
             except Exception as e:
-                logger.error(f"OpenAI API execution error: {e}")
-                ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
-        else:
-            # Intelligent F-Commerce Rule Engine (Local Dev Mode without API keys)
+                logger.error(f"OpenRouter API execution error: {e}")
+
+        # 3. Use Gemini API if valid key is available
+        if not ai_reply:
+            gemini_key = self.get_api_key()
+            if gemini_key and gemini_key != "your_gemini_api_key_here" and not gemini_key.startswith("AIzaSy_TEST"):
+                try:
+                    import httpx
+                    models_to_try = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-2.0-flash"]
+                    for model in models_to_try:
+                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+                        contents_payload = [
+                            {"role": "user" if m.sender == "user" else "model", "parts": [{"text": m.text}]}
+                            for m in history_msgs
+                        ]
+                        async with httpx.AsyncClient() as http_client:
+                            res = await http_client.post(
+                                url,
+                                headers={"Content-Type": "application/json"},
+                                json={"system_instruction": {"parts": [{"text": system_prompt}]}, "contents": contents_payload},
+                                timeout=15.0
+                            )
+                            if res.status_code == 200:
+                                data = res.json()
+                                ai_reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
+                                if ai_reply:
+                                    break
+                except Exception as e:
+                    logger.error(f"Gemini API execution error: {e}")
+
+        # 4. Try Ollama Local (Free local instance)
+        if not ai_reply:
+            try:
+                import httpx
+                async with httpx.AsyncClient() as http_client:
+                    res = await http_client.post(
+                        "http://localhost:11434/api/chat",
+                        json={"model": "qwen3:8b", "messages": [{"role": "system", "content": system_prompt}] + [{"role": "user" if m.sender == "user" else "assistant", "content": m.text} for m in history_msgs], "stream": False},
+                        timeout=5.0
+                    )
+                    if res.status_code == 200:
+                        ai_reply = res.json().get("message", {}).get("content")
+            except Exception:
+                pass
+
+        # 5. High-Precision F-Commerce Rule Engine (Guaranteed fallback)
+        if not ai_reply:
             ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
 
         # 4. Save AI reply to database
