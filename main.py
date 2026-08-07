@@ -121,17 +121,7 @@ def verify_webhook(
         raise HTTPException(status_code=403, detail="Verification token mismatch")
     return {"message": "Facebook Webhook Verification Endpoint. Send hub.mode, hub.verify_token, hub.challenge."}
 
-# Background processing of FB Webhook event
-async def process_facebook_message(psid: str, text: str, db: Session):
-    try:
-        agent = FCommerceSalesAgent(db=db, store_id=1)
-        ai_response = await agent.generate_response(psid=psid, user_message=text)
-        if ai_response:
-            await fb_client.send_text_message(psid=psid, text=ai_response)
-    except Exception as e:
-        logger.error(f"Error processing FB message in background: {e}")
-
-# 2. Facebook Webhook Event Listener
+# 2. Facebook Webhook Event Listener with Dynamic Store Resolution
 @app.post("/webhook")
 async def receive_webhook(request: Request, db: Session = Depends(get_db)):
     payload = await request.json()
@@ -140,13 +130,32 @@ async def receive_webhook(request: Request, db: Session = Depends(get_db)):
     for msg in incoming_msgs:
         psid = msg["psid"]
         text = msg["text"]
-        logger.info(f"Incoming FB Message from PSID {psid}: {text}")
+        page_id = msg.get("page_id")  # ✅ Extract Page ID from webhook
         
-        agent = FCommerceSalesAgent(db=db, store_id=1)
+        # ✅ DYNAMIC STORE LOOKUP by page_id
+        store = None
+        if page_id:
+            store = db.query(Store).filter(Store.fb_page_id == str(page_id).strip()).first()
+        
+        if not store:
+            # Fallback to default store
+            store = db.query(Store).first()
+            logger.warning(f"No store found for page_id: {page_id}, using default store: {store.id if store else 'None'}")
+        
+        if not store:
+            logger.error(f"No store configured for page_id: {page_id}")
+            continue
+            
+        logger.info(f"✅ Processing for Store: {store.name} (ID: {store.id}) | PSID: {psid}")
+        
+        # ✅ Use store-specific agent
+        agent = FCommerceSalesAgent(db=db, store_id=store.id)
         ai_response = await agent.generate_response(psid=psid, user_message=text)
         
         if ai_response:
-            await fb_client.send_text_message(psid=psid, text=ai_response)
+            # ✅ Use store-specific Page Access Token
+            store_token = store.fb_access_token or os.getenv("FB_PAGE_ACCESS_TOKEN")
+            await fb_client.send_text_message(psid=psid, text=ai_response, access_token=store_token)
 
     return {"status": "EVENT_RECEIVED"}
 
