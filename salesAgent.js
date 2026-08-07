@@ -71,39 +71,123 @@ export class FCommerceSalesAgent {
     return order;
   }
 
-  async generateGeminiResponse(apiKey, systemInstruction, conversationHistory) {
-    const modelsToTry = ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-2.0-flash'];
+  async generateGroqResponse(apiKey, systemInstruction, conversationHistory) {
+    const modelsToTry = ['llama-3.3-70b-versatile', 'llama3-70b-8192', 'mixtral-8x7b-32768'];
     for (const model of modelsToTry) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const contents = conversationHistory.map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }]
-        }));
+        const messages = [
+          { role: 'system', content: systemInstruction },
+          ...conversationHistory.map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
+          }))
+        ];
 
-        const payload = {
-          system_instruction: {
-            parts: [{ text: systemInstruction }]
-          },
-          contents
-        };
-
-        const res = await fetch(url, {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: 0.7,
+            max_tokens: 600
+          })
         });
 
         if (res.ok) {
           const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          const text = data.choices?.[0]?.message?.content;
           if (text) return text.trim();
         } else {
           const errText = await res.text();
-          console.warn(`Gemini API Model (${model}) warning [${res.status}]:`, errText);
+          console.warn(`Groq API (${model}) warning [${res.status}]:`, errText);
         }
       } catch (err) {
-        console.error(`Gemini request exception for ${model}:`, err.message);
+        console.error(`Groq API exception for ${model}:`, err.message);
+      }
+    }
+    return null;
+  }
+
+  async generateOpenRouterResponse(apiKey, systemInstruction, conversationHistory) {
+    const modelsToTry = [
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'google/gemini-2.0-flash-exp:free',
+      'mistralai/mistral-7b-instruct:free',
+      'qwen/qwen-2.5-72b-instruct'
+    ];
+    for (const model of modelsToTry) {
+      try {
+        const messages = [
+          { role: 'system', content: systemInstruction },
+          ...conversationHistory.map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
+          }))
+        ];
+
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': 'https://smartmessenger.ai',
+            'X-Title': 'Smart Messenger AI SaaS'
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: 0.7
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.choices?.[0]?.message?.content;
+          if (text) return text.trim();
+        } else {
+          const errText = await res.text();
+          console.warn(`OpenRouter API (${model}) warning [${res.status}]:`, errText);
+        }
+      } catch (err) {
+        console.error(`OpenRouter API exception for ${model}:`, err.message);
+      }
+    }
+    return null;
+  }
+
+  async generateOllamaResponse(systemInstruction, conversationHistory) {
+    const modelsToTry = ['qwen3:8b', 'phi-4-mini', 'llama3.2', 'mistral'];
+    for (const model of modelsToTry) {
+      try {
+        const messages = [
+          { role: 'system', content: systemInstruction },
+          ...conversationHistory.map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
+          }))
+        ];
+
+        const res = await fetch('http://localhost:11434/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model,
+            messages,
+            stream: false
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.message?.content;
+          if (text) return text.trim();
+        }
+      } catch (e) {
+        // Ollama might not be running locally, silent fallback
       }
     }
     return null;
@@ -184,20 +268,39 @@ CRITICAL OPERATIONAL RULES:
       );
     }
 
-    // Check if store owner has provided a Gemini API Key (or server environment fallback)
-    let apiKey = this.getStoreApiKey(storeId);
-    if (!apiKey) {
-      apiKey = process.env.GEMINI_API_KEY;
+    // 1. Try Groq (Ultra fast ~0.4s)
+    const groqKey = (store.groq_api_key && store.groq_api_key.trim() && store.groq_api_key !== "YOUR_GROQ_API_KEY_HERE") 
+      ? store.groq_api_key 
+      : process.env.GROQ_API_KEY;
+    if (groqKey && !reply) {
+      const groqReply = await this.generateGroqResponse(groqKey, systemInstruction, recentMessages);
+      if (groqReply) reply = groqReply;
     }
 
-    if (apiKey && !apiKey.includes("TEST_GEMINI_KEY") && apiKey !== "your_gemini_api_key_here") {
-      const geminiReply = await this.generateGeminiResponse(apiKey, systemInstruction, recentMessages);
-      if (geminiReply) {
-        reply = geminiReply;
-      }
+    // 2. Try OpenRouter (Free community models)
+    const openrouterKey = (store.openrouter_api_key && store.openrouter_api_key.trim() && store.openrouter_api_key !== "YOUR_OPENROUTER_API_KEY_HERE")
+      ? store.openrouter_api_key
+      : process.env.OPENROUTER_API_KEY;
+    if (openrouterKey && !reply) {
+      const openRouterReply = await this.generateOpenRouterResponse(openrouterKey, systemInstruction, recentMessages);
+      if (openRouterReply) reply = openRouterReply;
     }
 
-    // If Gemini API is not configured or fails, use high-precision F-Commerce rule engine
+    // 3. Try Google Gemini
+    let geminiKey = this.getStoreApiKey(storeId);
+    if (!geminiKey) geminiKey = process.env.GEMINI_API_KEY;
+    if (geminiKey && !geminiKey.includes("TEST_GEMINI_KEY") && geminiKey !== "your_gemini_api_key_here" && !reply) {
+      const geminiReply = await this.generateGeminiResponse(geminiKey, systemInstruction, recentMessages);
+      if (geminiReply) reply = geminiReply;
+    }
+
+    // 4. Try Ollama (Local free instance)
+    if (!reply) {
+      const ollamaReply = await this.generateOllamaResponse(systemInstruction, recentMessages);
+      if (ollamaReply) reply = ollamaReply;
+    }
+
+    // 5. High-Precision F-Commerce Rule Engine (Guaranteed fallback)
     if (!reply) {
       reply = this._fallbackRuleEngine(store, products, psid, userMessage, storeId);
     }
