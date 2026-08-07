@@ -212,11 +212,22 @@ class FCommerceSalesAgent:
             logger.info(f"Conversation for PSID {psid} handed off to human. Reason: {reason}")
         return f"Conversation handed over to human support team. Reason: {reason}"
 
+    def get_api_key(self) -> str:
+        """
+        Get the Gemini API key for this store, falling back to environment variable.
+        """
+        if (self.store.gemini_api_key and 
+            self.store.gemini_api_key.strip() and 
+            self.store.gemini_api_key != "your_gemini_api_key_here" and
+            not self.store.gemini_api_key.startswith("AIzaSy_TEST")):
+            return self.store.gemini_api_key
+        return os.getenv("GEMINI_API_KEY", "")
+
     async def generate_response(self, psid: str, user_message: str) -> str:
-        """Processes customer message, manages conversation state, calls tools, and returns response."""
-        # 1. Get or create conversation
+        """Generates contextual sales responses via Gemini API with store-specific credentials or fallback rule engine."""
+        # 1. Look up or create conversation
         conv = self.db.query(Conversation).filter(
-            Conversation.psid == psid,
+            Conversation.psid == psid, 
             Conversation.store_id == self.store.id
         ).first()
 
@@ -226,25 +237,22 @@ class FCommerceSalesAgent:
             self.db.commit()
             self.db.refresh(conv)
 
-        # Check if human agent has taken over
+        # 2. Check if Human Takeover lock is active
         if not conv.is_ai_active:
-            logger.info(f"PSID {psid} is in human agent takeover mode. AI auto-reply paused.")
+            logger.info(f"[HUMAN TAKEOVER] AI auto-reply paused for PSID: {psid} (Store ID: {self.store.id}).")
             return ""
 
-        # 2. Save incoming user message
+        # 3. Add incoming user message to history
         user_msg_db = Message(conversation_id=conv.id, sender="user", text=user_message)
         self.db.add(user_msg_db)
         self.db.commit()
 
-        # 3. Retrieve recent conversation history
-        history_msgs = self.db.query(Message).filter(
-            Message.conversation_id == conv.id
-        ).order_by(Message.id.desc()).limit(10).all()
+        # Load recent context history (last 10 messages)
+        history_msgs = self.db.query(Message).filter(Message.conversation_id == conv.id).order_by(Message.id.desc()).limit(10).all()
         history_msgs.reverse()
 
-        # Build prompt & context
         product_catalog_str = self._get_product_catalog_str()
-        system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
+        system_prompt = (getattr(self.store, 'custom_sales_prompt', None) or SYSTEM_PROMPT_TEMPLATE).format(
             store_name=self.store.name,
             currency=self.store.currency,
             inside_city_fee=self.store.inside_city_fee,
@@ -252,22 +260,37 @@ class FCommerceSalesAgent:
             product_catalog_str=product_catalog_str
         )
 
-        # Use Gemini SDK if GEMINI_API_KEY is available
-        if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
-            try:
-                from google import genai
-                client = genai.Client(api_key=GEMINI_API_KEY)
-                
-                # Format conversation history
-                contents = [system_prompt, "\nRECENT CONVERSATION HISTORY:"]
-                for m in history_msgs:
-                    contents.append(f"{m.sender.upper()}: {m.text}")
+        ai_reply = None
+        gemini_key = self.get_api_key()
 
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents="\n".join(contents)
-                )
-                ai_reply = response.text
+        # Use Gemini API if valid key is available
+        if gemini_key and gemini_key != "your_gemini_api_key_here" and not gemini_key.startswith("AIzaSy_TEST"):
+            try:
+                import httpx
+                models_to_try = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-2.0-flash"]
+                for model in models_to_try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+                    contents_payload = [
+                        {"role": "user" if m.sender == "user" else "model", "parts": [{"text": m.text}]}
+                        for m in history_msgs
+                    ]
+                    async with httpx.AsyncClient() as http_client:
+                        res = await http_client.post(
+                            url,
+                            headers={"Content-Type": "application/json"},
+                            json={"system_instruction": {"parts": [{"text": system_prompt}]}, "contents": contents_payload},
+                            timeout=15.0
+                        )
+                        if res.status_code == 200:
+                            data = res.json()
+                            ai_reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
+                            if ai_reply:
+                                break
+                        else:
+                            logger.warning(f"Gemini API model {model} status {res.status_code}: {res.text}")
+                
+                if not ai_reply:
+                    ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
             except Exception as e:
                 logger.error(f"Gemini API execution error: {e}")
                 ai_reply = self._fallback_rule_engine(user_message, psid, history_msgs)
