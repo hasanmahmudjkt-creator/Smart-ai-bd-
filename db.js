@@ -196,6 +196,8 @@ export class JsonDatabase {
     if (settings.fb_access_token !== undefined) store.fb_access_token = sanitizeString(settings.fb_access_token);
     if (settings.verify_token !== undefined) store.verify_token = sanitizeString(settings.verify_token);
     if (settings.gemini_api_key !== undefined) store.gemini_api_key = sanitizeString(settings.gemini_api_key);
+    if (settings.groq_api_key !== undefined) store.groq_api_key = sanitizeString(settings.groq_api_key);
+    if (settings.openrouter_api_key !== undefined) store.openrouter_api_key = sanitizeString(settings.openrouter_api_key);
 
     this.save();
     return store;
