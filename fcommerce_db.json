@@ -219,6 +219,51 @@
       "handoff_reason": null,
       "created_at": "2026-08-05T03:06:49.588Z",
       "updated_at": "2026-08-05T03:06:49.588Z"
+    },
+    {
+      "id": 12,
+      "psid": "test_user_001",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-07T16:53:08.097Z",
+      "updated_at": "2026-08-07T16:53:08.097Z"
+    },
+    {
+      "id": 13,
+      "psid": "test_user_002",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-07T16:53:08.106Z",
+      "updated_at": "2026-08-07T16:53:08.106Z"
+    },
+    {
+      "id": 14,
+      "psid": "test_user_003",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-07T16:53:08.110Z",
+      "updated_at": "2026-08-07T16:53:08.110Z"
+    },
+    {
+      "id": 15,
+      "psid": "customer_store_1",
+      "store_id": 1,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-07T16:53:21.488Z",
+      "updated_at": "2026-08-07T16:53:21.488Z"
+    },
+    {
+      "id": 16,
+      "psid": "customer_store_2",
+      "store_id": 2,
+      "is_ai_active": true,
+      "handoff_reason": null,
+      "created_at": "2026-08-07T16:53:21.535Z",
+      "updated_at": "2026-08-07T16:53:21.535Z"
     }
   ],
   "messages": [
@@ -641,6 +686,55 @@
       "sender": "user",
       "text": "x",
       "created_at": "2026-08-05T03:06:58.756Z"
+    },
+    {
+      "id": 61,
+      "conversation_id": 12,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-08-07T16:53:08.098Z"
+    },
+    {
+      "id": 62,
+      "conversation_id": 13,
+      "sender": "user",
+      "text": "How much is the delivery charge?",
+      "created_at": "2026-08-07T16:53:08.107Z"
+    },
+    {
+      "id": 63,
+      "conversation_id": 14,
+      "sender": "user",
+      "text": "I want to order 1 T-shirt. Name: Rahim, Phone: 01712345678, Address: Uttara, Dhaka",
+      "created_at": "2026-08-07T16:53:08.111Z"
+    },
+    {
+      "id": 64,
+      "conversation_id": 15,
+      "sender": "user",
+      "text": "Hi, what products do you sell?",
+      "created_at": "2026-08-07T16:53:21.488Z"
+    },
+    {
+      "id": 65,
+      "conversation_id": 15,
+      "sender": "assistant",
+      "text": "Hello! Here are our available products at **F-Commerce Fashion Store**:\n\nNo products currently in stock.\n\n🚚 **Delivery Charge:**\n• Inside City: BDT 70\n• Outside City: BDT 130\n\nWhich product would you like to order? Reply with your **Name, Phone Number, and Address** to place an order!",
+      "created_at": "2026-08-07T16:53:21.534Z"
+    },
+    {
+      "id": 66,
+      "conversation_id": 16,
+      "sender": "user",
+      "text": "Hi, do you have any gadgets or power banks?",
+      "created_at": "2026-08-07T16:53:21.535Z"
+    },
+    {
+      "id": 67,
+      "conversation_id": 16,
+      "sender": "assistant",
+      "text": "Hello! Welcome to **Gadget World BD**! 👋\n\nWe offer top quality items such as: Wireless ANC Earbuds Pro.\n\nHow can I help you today? Ask us about prices, product details, delivery charges, or send your **Name, Phone & Address** to place an order!",
+      "created_at": "2026-08-07T16:53:21.541Z"
     }
   ],
   "orders": [
@@ -822,6 +916,32 @@
       "subtotal": 3200,
       "delivery_fee": 70,
       "total_amount": 3270,
+      "currency": "BDT",
+      "payment_method": "Cash on Delivery"
+    },
+    {
+      "id": 8,
+      "store_id": 1,
+      "status": "pending",
+      "created_at": "2026-08-07T16:53:08.111Z",
+      "psid": "test_user_003",
+      "customer_name": "Rahim",
+      "phone_number": "01712345678",
+      "full_address": "Uttara, Dhaka",
+      "city_zone": "Inside City",
+      "line_items": [
+        {
+          "product_id": null,
+          "title": "Standard Item",
+          "quantity": 1,
+          "variant": "",
+          "price_per_unit": 650,
+          "total": 650
+        }
+      ],
+      "subtotal": 650,
+      "delivery_fee": 70,
+      "total_amount": 720,
       "currency": "BDT",
       "payment_method": "Cash on Delivery"
     }
