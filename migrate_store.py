@@ -21,6 +21,10 @@ def migrate_store_table():
         new_columns.append("ALTER TABLE stores ADD COLUMN fb_access_token TEXT")
     if 'gemini_api_key' not in existing_columns:
         new_columns.append("ALTER TABLE stores ADD COLUMN gemini_api_key TEXT")
+    if 'groq_api_key' not in existing_columns:
+        new_columns.append("ALTER TABLE stores ADD COLUMN groq_api_key TEXT")
+    if 'openrouter_api_key' not in existing_columns:
+        new_columns.append("ALTER TABLE stores ADD COLUMN openrouter_api_key TEXT")
     
     if new_columns:
         with engine.connect() as conn:
