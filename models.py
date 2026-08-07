@@ -11,6 +11,7 @@ class Store(Base):
     name = Column(String(150), nullable=False)
     fb_page_id = Column(String(100), unique=True, index=True, nullable=True)
     fb_access_token = Column(Text, nullable=True)
+    gemini_api_key = Column(Text, nullable=True)
     inside_city_fee = Column(Float, default=60.0)
     outside_city_fee = Column(Float, default=120.0)
     currency = Column(String(10), default="BDT")
