@@ -6,7 +6,7 @@ async function runSimulator() {
   printHeader("🤖 F-Commerce AI Messenger Sales Engine - Node.js Test Simulator");
   console.log("=" .repeat(70));
 
-  const store = db.getStore();
+  const store = db.getStoreById(1);
   console.log(`\n🏬 Connected Store: ${store.name} (Currency: ${store.currency})`);
   
   const products = db.getProducts();
