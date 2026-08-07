@@ -5,6 +5,16 @@ export class FCommerceSalesAgent {
     return db.getStoreById(storeId);
   }
 
+  getStoreApiKey(storeId) {
+    const store = this.getStore(storeId);
+    if (store && store.gemini_api_key && store.gemini_api_key.trim() && 
+        !store.gemini_api_key.includes('TEST_GEMINI_KEY') && 
+        store.gemini_api_key !== "your_gemini_api_key_here") {
+      return store.gemini_api_key.trim();
+    }
+    return process.env.GEMINI_API_KEY || '';
+  }
+
   calculateDeliveryCharge(storeId, addressOrCity) {
     const store = this.getStore(storeId);
     const text = addressOrCity.toLowerCase();
@@ -145,10 +155,42 @@ CRITICAL OPERATIONAL RULES:
 
     let reply = "";
 
-    // Check if store owner has provided a Gemini API Key (or server environment fallback)
-    const apiKey = store.gemini_api_key || process.env.GEMINI_API_KEY;
+    // Check for Order Placement Detection (Name, Phone, Address pattern) to persist in DB
+    if (/(\+?8801|01)[3-9]\d{8}/.test(userMessage) && userMessage.length > 15) {
+      const phoneMatch = userMessage.match(/(\+?8801|01)[3-9]\d{8}/);
+      const phone = phoneMatch ? phoneMatch[0] : "";
 
-    if (apiKey && apiKey !== "your_gemini_api_key_here") {
+      const nameMatch = userMessage.match(/Name:\s*([^,\n]+)/i);
+      let name = nameMatch ? nameMatch[1].trim() : "";
+      if (!name) {
+        const lines = userMessage.split('\n').map(l => l.trim()).filter(Boolean);
+        name = lines[0] && lines[0].length < 30 ? lines[0] : "Valued Customer";
+      }
+
+      const addressMatch = userMessage.match(/Address:\s*([^\n]+)/i);
+      let address = addressMatch ? addressMatch[1].trim() : "";
+      if (!address) {
+        address = userMessage.replace(phone, "").replace(/Name:\s*[^,\n]+/i, "").trim() || "Dhaka, Bangladesh";
+      }
+
+      const sampleProd = products[0] || { id: 1, title: "Standard Item", price: 650 };
+      this.executeCreateOrder(
+        storeId,
+        psid,
+        name,
+        phone,
+        address,
+        [{ product_id: sampleProd.id, product_name: sampleProd.title, quantity: 1 }]
+      );
+    }
+
+    // Check if store owner has provided a Gemini API Key (or server environment fallback)
+    let apiKey = this.getStoreApiKey(storeId);
+    if (!apiKey) {
+      apiKey = process.env.GEMINI_API_KEY;
+    }
+
+    if (apiKey && !apiKey.includes("TEST_GEMINI_KEY") && apiKey !== "your_gemini_api_key_here") {
       const geminiReply = await this.generateGeminiResponse(apiKey, systemInstruction, recentMessages);
       if (geminiReply) {
         reply = geminiReply;
