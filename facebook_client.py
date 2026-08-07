@@ -59,13 +59,22 @@ class FacebookMessengerClient:
             logger.error(f"Error parsing Facebook webhook payload: {e}")
         return messages
 
-    async def send_text_message(self, psid: str, text: str) -> bool:
-        """Sends a text reply to a customer via Facebook Graph API."""
-        if not self.access_token or self.access_token == "mock_page_access_token":
+    async def send_text_message(self, psid: str, text: str, access_token: str | None = None) -> bool:
+        """
+        Sends a text reply to a customer via Facebook Graph API.
+        
+        Args:
+            psid: Page-Scoped User ID of the recipient
+            text: Message text to send
+            access_token: Optional override for the Page Access Token (store-specific)
+        """
+        token = access_token or self.access_token
+        
+        if not token or token == "mock_page_access_token" or token.strip() == "":
             logger.info(f"[TEST MODE - Mock FB Send] To PSID: {psid} | Message: {text}")
             return True
 
-        params = {"access_token": self.access_token}
+        params = {"access_token": token}
         payload = {
             "recipient": {"id": psid},
             "messaging_type": "RESPONSE",
@@ -76,10 +85,10 @@ class FacebookMessengerClient:
             try:
                 response = await client.post(self.api_url, params=params, json=payload, timeout=10.0)
                 if response.status_code == 200:
-                    logger.info(f"Successfully sent FB message to PSID {psid}")
+                    logger.info(f"✅ Successfully sent FB message to PSID {psid}")
                     return True
                 else:
-                    logger.error(f"Failed to send FB message: {response.status_code} - {response.text}")
+                    logger.error(f"❌ Failed to send FB message: {response.status_code} - {response.text}")
                     return False
             except Exception as e:
                 logger.error(f"HTTP error sending FB message: {e}")
