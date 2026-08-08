@@ -1,7 +1,7 @@
 import os
 import logging
 from typing import Optional, List, Dict, Any
-from fastapi import FastAPI, Depends, Query, HTTPException, Request, Response, BackgroundTask
+from fastapi import FastAPI, Depends, Query, HTTPException, Request, Response, BackgroundTasks
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
