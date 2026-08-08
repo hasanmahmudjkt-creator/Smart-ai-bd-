@@ -92,20 +92,38 @@ export class JsonDatabase {
     this.init();
   }
 
-  init() {
-    if (fs.existsSync(this.dbPath)) {
-      try {
-        const raw = fs.readFileSync(this.dbPath, 'utf8');
+  load() {
+    try {
+      if (fs.existsSync(this.dbPath)) {
+        const raw = fs.readFileSync(this.dbPath, 'utf-8');
         this.data = JSON.parse(raw);
-        if (!this.data.users) this.data.users = defaultData.users;
-        if (!this.data.stores) this.data.stores = defaultData.stores;
-      } catch (err) {
-        console.error("Error loading DB file, resetting to defaults:", err);
+        // Normalize schema fields across all stores
+        this.data.stores = (this.data.stores || []).map(s => ({
+          id: s.id,
+          user_id: s.user_id || 1,
+          name: s.name || "F-Commerce Store",
+          currency: s.currency || "BDT",
+          inside_city_fee: s.inside_city_fee !== undefined ? s.inside_city_fee : 70.0,
+          outside_city_fee: s.outside_city_fee !== undefined ? s.outside_city_fee : 130.0,
+          fb_page_id: s.fb_page_id || "",
+          fb_access_token: s.fb_access_token || "",
+          verify_token: s.verify_token || "fcommerce_ai_secret_token_123",
+          gemini_api_key: s.gemini_api_key || "",
+          groq_api_key: s.groq_api_key || "",
+          openrouter_api_key: s.openrouter_api_key || "",
+          custom_prompt: s.custom_prompt || ""
+        }));
+      } else {
         this.save();
       }
-    } else {
+    } catch (e) {
+      console.error("Failed to load JSON database, re-seeding default data:", e);
       this.save();
     }
+  }
+
+  init() {
+    this.load();
   }
 
   save() {
