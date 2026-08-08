@@ -6,12 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fcommerce.db")
+# Use PostgreSQL for production (Vercel / Railway / Supabase), SQLite for local development
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# For SQLite, check_same_thread needs to be False for multithreaded FastAPI handling
-engine_kwargs = {}
-if DATABASE_URL.startswith("sqlite"):
-    engine_kwargs["connect_args"] = {"check_same_thread": False}
+if not DATABASE_URL:
+    DATABASE_URL = "sqlite:///./fcommerce.db"
+    engine_kwargs = {"connect_args": {"check_same_thread": False}}
+else:
+    # SQLAlchemy requires 'postgresql://' instead of legacy 'postgres://'
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    engine_kwargs = {}
 
 engine = create_engine(DATABASE_URL, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
