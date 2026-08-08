@@ -11,6 +11,31 @@ export default defineConfig({
       name: 'facebook-webhook-handler',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
+          if (req.url === '/health' || req.url === '/api/health') {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify({ status: "online", system: "Smart Messenger AI SaaS", database: "connected" }));
+          }
+
+          if (req.url && req.url.startsWith('/api/test-chat') && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk.toString(); });
+            req.on('end', async () => {
+              try {
+                const payload = JSON.parse(body || '{}');
+                const storeId = parseInt(req.headers['x-store-id']) || 1;
+                const reply = await salesAgent.generateResponse(payload.psid || 'test_user', payload.message || '', storeId);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({ response: reply, status: "success" }));
+              } catch (e) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'application/json');
+                return res.end(JSON.stringify({ error: e.message }));
+              }
+            });
+            return;
+          }
           if (req.url && (req.url.startsWith('/api/settings') || req.url.startsWith('/api/store/settings')) && (req.method === 'POST' || req.method === 'PUT')) {
             let body = '';
             req.on('data', chunk => { body += chunk.toString(); });
