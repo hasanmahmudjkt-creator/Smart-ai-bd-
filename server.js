@@ -17,6 +17,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Health check endpoint
+app.get(['/health', '/api/health'], (req, res) => {
+  res.json({ status: "online", system: "Smart Messenger AI SaaS", database: "connected" });
+});
+
 // Middleware helper for Store ID resolution
 function getStoreId(req) {
   const headerStoreId = req.headers['x-store-id'];
